@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { CollectionConfig } from "payload";
 
 import { Role, byRole } from "@repo/payload/utils/roles";
@@ -89,30 +90,30 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
         }
 
         try {
-          if (!doc.resumeSetup) {
-            throw new Error("Resume setup not found");
-          }
-
           const resumeSetup = await req.payload.findByID({
             collection: "resume_setups",
-            id: "id" in doc.resumeSetup ? doc.resumeSetup.id : doc.resumeSetup,
+            id:
+              typeof doc.resumeSetup === "number"
+                ? doc.resumeSetup
+                : doc.resumeSetup.id,
           });
 
           if (!resumeSetup?.resumeData) {
             throw new Error("Resume data not found");
           }
-          console.log(resumeSetup.resumeData);
+
           const resumeData = await req.payload.findByID({
             collection: "resume_data",
             id:
-              typeof resumeSetup.resumeData === "object"
-                ? resumeSetup.resumeData.id
-                : resumeSetup.resumeData,
+              typeof resumeSetup.resumeData === "number"
+                ? resumeSetup.resumeData
+                : resumeSetup.resumeData.id,
           });
+
           if (!resumeSetup.resumePrompt) {
             throw new Error("Resume prompt not found");
           }
-          console.log(resumeData);
+
           const prompt = await req.payload.findByID({
             collection: "resume_prompts",
             id:
@@ -120,12 +121,15 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
                 ? resumeSetup.resumePrompt
                 : resumeSetup.resumePrompt.id,
           });
+
           if (!prompt.prompt) {
             throw new Error("Prompt not found");
           }
+
           const globalOpenAI = await req.payload.findGlobal({
             slug: "openai",
           });
+
           Handlebars.registerHelper(
             "ifEquals",
             function (
@@ -142,16 +146,19 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
               return a === b ? options.fn(this) : options.inverse(this);
             }
           );
+
           const renderedPrompt = Handlebars.compile(prompt.prompt)({
             resume: resumeData,
             setup: resumeSetup,
           });
+
           const renderedSystemPrompt = Handlebars.compile(
             prompt.systemPrompt ?? ""
           )({
             resume: resumeData,
             setup: resumeSetup,
           });
+
           if (doc.exportFormat === ResumeExportType.PLAIN_TEXT) {
             if (resumeSetup.exportFormat === ResumeExportFormat.MARKDOWN) {
               const { text: generatedMarkdown } = await generateText({

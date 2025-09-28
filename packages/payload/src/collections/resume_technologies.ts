@@ -5,6 +5,7 @@ import { getResumeTechnologyTypeOptions } from "@repo/payload/utils/resumes";
 export const resumeTechnologies: CollectionConfig<"resume_technologies"> = {
   slug: "resume_technologies",
   admin: {
+    useAsTitle: "technology",
     description:
       "Resumes Technologies are used to track the technologies of the resumes of the users and are used as input data for the AI agents.",
   },

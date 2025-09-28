@@ -69,7 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
-    resume_data: ResumeDatum;
+    resume_data: ResumeData;
     resume_skills: ResumeSkill;
     resume_languages: ResumeLanguage;
     resume_technologies: ResumeTechnology;
@@ -187,7 +187,7 @@ export interface Media {
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "resume_data".
  */
-export interface ResumeDatum {
+export interface ResumeData {
   id: number;
   owner?: (number | null) | User;
   name?: string | null;
@@ -382,7 +382,7 @@ export interface ResumeSetup {
   owner?: (number | null) | User;
   name?: string | null;
   description?: string | null;
-  resumeData?: (number | null) | ResumeDatum;
+  resumeData?: (number | null) | ResumeData;
   resumePrompt?: (number | null) | ResumePrompt;
   exportFormat?: 'markdown' | null;
   targetCountry?: string | null;
@@ -461,7 +461,7 @@ export interface ResumeImport {
       [k: string]: unknown;
     } | null;
   };
-  resumeData?: (number | null) | ResumeDatum;
+  resumeData?: (number | null) | ResumeData;
   updatedAt: string;
   createdAt: string;
 }
@@ -482,7 +482,7 @@ export interface PayloadLockedDocument {
       } | null)
     | ({
         relationTo: 'resume_data';
-        value: number | ResumeDatum;
+        value: number | ResumeData;
       } | null)
     | ({
         relationTo: 'resume_skills';

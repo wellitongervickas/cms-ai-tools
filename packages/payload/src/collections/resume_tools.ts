@@ -5,6 +5,7 @@ import { getResumeToolCategoryOptions } from "@repo/payload/utils/resumes";
 export const resumeTools: CollectionConfig<"resume_tools"> = {
   slug: "resume_tools",
   admin: {
+    useAsTitle: "tool",
     description:
       "Resumes Tools are used to track the tools of the resumes of the users and are used as input data for the AI agents.",
   },

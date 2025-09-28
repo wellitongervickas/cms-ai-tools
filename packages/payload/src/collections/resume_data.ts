@@ -13,6 +13,9 @@ export const resumeData: CollectionConfig<"resume_data"> = {
   admin: {
     useAsTitle: "name",
   },
+  typescript: {
+    interface: "ResumeData",
+  },
   labels: {
     singular: "Resume Data",
     plural: "Resume Data",

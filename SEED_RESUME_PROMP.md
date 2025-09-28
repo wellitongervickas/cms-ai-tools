@@ -37,17 +37,17 @@ Given the candidate's structured data and a job target, produce a **{{setup.expo
 
 ## Candidate Resume
 
-Name: {{#profile.suffix}}{{profile.suffix}}{{/profile.suffix}} {{profile.firstName}} {{profile.lastName}}
-Headline: {{profile.headline}}
-Summary: {{profile.summary}}
+Name: {{#resume.profile.suffix}}{{resume.profile.suffix}}{{/resume.profile.suffix}} {{resume.profile.firstName}} {{resume.profile.lastName}}
+Headline: {{resume.profile.headline}}
+Summary: {{resume.profile.summary}}
 
 Contacts:
-{{#profile.contacts}}- ({{type}}) {{value}} {{#label}}({{label}}){{/label}}
-{{/profile.contacts}}
+{{#resume.profile.contacts}}- ({{type}}) {{value}} {{#label}}({{label}}){{/label}}
+{{/resume.profile.contacts}}
 
 ### Experiences
 
-{{#experiences}}
+{{#resume.experiences}}
 
 {{jobTitle}} — {{company}}
 
@@ -60,34 +60,37 @@ Contacts:
 {{#items}}- {{item}}
 {{/items}}
 {{/customBlocks}}
-{{/experiences}}
+{{/resume.experiences}}
 
-Education
+### Education
 
-{{#education}}
+{{#resume.education}}
 {{degree}}, {{institution}} ({{fieldOfStudy}})
 {{startDate}} – {{#endDate}}{{endDate}}{{/endDate}}{{^endDate}}Present{{/endDate}}
 {{description}}
-{{/education}}
+{{/resume.education}}
 
-Skills
+### Skills
 
-{{#skills}}- {{skill}}{{#category}} ({{category}}){{/category}}
-{{/skills}}
+{{#resume.skills}}
+
+- {{skill}}{{#category}} ({{category}}){{/category}}
+  {{/resume.skills}}
 
 Languages
 
-{{#languages}}- {{language}}: {{level}}
-{{/languages}}
+{{#resume.languages}}
 
-Projects
+- {{language}}: {{level}}
+  {{/resume.languages}}
 
-{{#projects}}
+### Projects
 
+{{#resume.projects}}
 {{project}} ({{role}})
 
 {{description}}
 {{#technologies}}- {{technology}}{{/technologies}}
 {{#links}}{{label}}
 {{/links}}
-{{/projects}}
+{{/resume.projects}}

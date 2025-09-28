@@ -15,6 +15,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum_resume_imports_import_type" AS ENUM('plainText');
   CREATE TYPE "public"."enum_resume_exports_status" AS ENUM('pending', 'completed', 'failed');
   CREATE TYPE "public"."enum_resume_exports_export_type" AS ENUM('plainText');
+  CREATE TYPE "public"."enum_openai_general_model" AS ENUM('gpt-5', 'gpt-4.1');
   CREATE TABLE "users_sessions" (
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
@@ -219,7 +220,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"description" varchar,
   	"resume_data_id" integer,
   	"resume_prompt_id" integer,
-  	"export_format" "enum_resume_setups_export_format",
+  	"export_format" "enum_resume_setups_export_format" DEFAULT 'markdown',
   	"target_country" varchar,
   	"target_language" varchar,
   	"target_job_title" varchar,
@@ -232,7 +233,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE "resume_prompts" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"name" varchar,
-  	"prompt" jsonb,
+  	"system_prompt" varchar,
+  	"prompt" varchar,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
@@ -254,8 +256,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"name" varchar,
   	"status" "enum_resume_exports_status" DEFAULT 'pending',
   	"resume_setup_id" integer,
-  	"export_type" "enum_resume_exports_export_type",
-  	"plain_text_content" jsonb,
+  	"export_type" "enum_resume_exports_export_type" DEFAULT 'plainText',
+  	"plain_text_content" varchar,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
@@ -307,6 +309,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"batch" numeric,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
+  );
+  
+  CREATE TABLE "openai" (
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"general_model" "enum_openai_general_model" DEFAULT 'gpt-5' NOT NULL,
+  	"updated_at" timestamp(3) with time zone,
+  	"created_at" timestamp(3) with time zone
   );
   
   ALTER TABLE "users_sessions" ADD CONSTRAINT "users_sessions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
@@ -476,6 +485,7 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "payload_preferences" CASCADE;
   DROP TABLE "payload_preferences_rels" CASCADE;
   DROP TABLE "payload_migrations" CASCADE;
+  DROP TABLE "openai" CASCADE;
   DROP TYPE "public"."_locales";
   DROP TYPE "public"."enum_users_role";
   DROP TYPE "public"."enum_resume_data_profile_contacts_type";
@@ -488,5 +498,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_resume_setups_options_optmized_for";
   DROP TYPE "public"."enum_resume_imports_import_type";
   DROP TYPE "public"."enum_resume_exports_status";
-  DROP TYPE "public"."enum_resume_exports_export_type";`)
+  DROP TYPE "public"."enum_resume_exports_export_type";
+  DROP TYPE "public"."enum_openai_general_model";`)
 }

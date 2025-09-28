@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
       '.mjs': ['.mts', '.mjs'],
     }
 
+    webpackConfig.resolve.alias.handlebars = 'handlebars/dist/handlebars.js'
+
     return webpackConfig
   },
 }

@@ -42,6 +42,16 @@
       "types": "./dist/plugins/*.d.ts",
       "default": "./src/plugins/*.ts"
     },
+    "./globals": {
+      "import": "./src/globals/index.ts",
+      "types": "./dist/globals/index.d.ts",
+      "default": "./src/globals/index.ts"
+    },
+    "./globals/*": {
+      "import": "./src/globals/*.ts",
+      "types": "./dist/globals/*.d.ts",
+      "default": "./src/globals/*.ts"
+    },
     "./utils": {
       "import": "./src/utils/index.ts",
       "types": "./dist/utils/index.d.ts",
@@ -81,6 +91,11 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "@ai-sdk/openai": "^2.0.38",
+    "@types/handlebars": "^4.1.0",
+    "ai": "^5.0.56",
+    "handlebars": "^4.7.8",
+    "lodash": "^4.17.21",
+    "zod": "^4.1.11"
   }
 }

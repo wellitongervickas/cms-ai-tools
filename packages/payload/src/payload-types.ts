@@ -106,8 +106,12 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    openai: Openai;
+  };
+  globalsSelect: {
+    openai: OpenaiSelect<false> | OpenaiSelect<true>;
+  };
   locale: 'en';
   user: User & {
     collection: 'users';
@@ -405,22 +409,8 @@ export interface ResumeSetup {
 export interface ResumePrompt {
   id: number;
   name?: string | null;
-  prompt?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  output?: string | null;
+  systemPrompt?: string | null;
+  prompt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -438,21 +428,7 @@ export interface ResumeExport {
   resume_setup?: (number | null) | ResumeSetup;
   exportType?: 'plainText' | null;
   plainText?: {
-    content?: {
-      root: {
-        type: string;
-        children: {
-          type: any;
-          version: number;
-          [k: string]: unknown;
-        }[];
-        direction: ('ltr' | 'rtl') | null;
-        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-        indent: number;
-        version: number;
-      };
-      [k: string]: unknown;
-    } | null;
+    content?: string | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -809,8 +785,8 @@ export interface ResumeSetupsSelect<T extends boolean = true> {
  */
 export interface ResumePromptsSelect<T extends boolean = true> {
   name?: T;
+  systemPrompt?: T;
   prompt?: T;
-  output?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -880,6 +856,32 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "openai".
+ */
+export interface Openai {
+  id: number;
+  general: {
+    model: 'gpt-5' | 'gpt-4.1';
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "openai_select".
+ */
+export interface OpenaiSelect<T extends boolean = true> {
+  general?:
+    | T
+    | {
+        model?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

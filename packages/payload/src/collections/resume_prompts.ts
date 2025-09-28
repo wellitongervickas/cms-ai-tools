@@ -1,6 +1,11 @@
 import type { CollectionConfig } from "payload";
 
 import { Role, byRole } from "@repo/payload/utils/roles";
+import {
+  convertLexicalToMarkdown,
+  // convertMarkdownToLexical,
+  editorConfigFactory,
+} from "@payloadcms/richtext-lexical";
 
 export const resumePrompts: CollectionConfig<"resume_prompts"> = {
   slug: "resume_prompts",
@@ -20,18 +25,14 @@ export const resumePrompts: CollectionConfig<"resume_prompts"> = {
       label: "Name",
     },
     {
-      type: "richText",
-      name: "prompt",
-      label: "Prompt",
+      name: "systemPrompt",
+      type: "textarea",
+      label: "System Prompt",
     },
     {
       type: "textarea",
-      name: "output",
-      label: "Output",
-      virtual: true,
-      admin: {
-        readOnly: true,
-      },
+      name: "prompt",
+      label: "Prompt",
     },
   ],
   access: {

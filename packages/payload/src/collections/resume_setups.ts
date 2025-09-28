@@ -4,6 +4,7 @@ import { Role, byRole } from "@repo/payload/utils/roles";
 import {
   getResumeExportFormatOptions,
   getResumeOptmizedForOptions,
+  ResumeExportFormat,
 } from "@repo/payload/utils/resumes";
 import { ownerField } from "@repo/payload/collections/fields/owner";
 
@@ -47,6 +48,7 @@ export const resumeSetups: CollectionConfig<"resume_setups"> = {
       type: "select",
       name: "exportFormat",
       label: "Export Format",
+      defaultValue: ResumeExportFormat.MARKDOWN,
       options: getResumeExportFormatOptions(),
     },
     {
@@ -86,9 +88,10 @@ export const resumeSetups: CollectionConfig<"resume_setups"> = {
       name: "exports",
       on: "resume_setup",
       collection: "resume_exports",
-      hasMany: false,
+      hasMany: true,
     },
   ],
+
   access: {
     read: byRole([Role.Admin]),
     update: byRole([Role.Admin]),

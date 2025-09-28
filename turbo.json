@@ -7,7 +7,8 @@
     "PAYLOAD_SECRET",
     "NEXT_PUBLIC_BASE_URL",
     "CRON_SECRET",
-    "CI"
+    "CI",
+    "OPENAI_API_KEY"
   ],
   "concurrency": "11",
   "tasks": {
@@ -23,7 +24,8 @@
         "PAYLOAD_SECRET",
         "CRON_SECRET",
         "CI",
-        "NEXT_PUBLIC_BASE_URL"
+        "NEXT_PUBLIC_BASE_URL",
+        "OPENAI_API_KEY"
       ]
     },
     "test": {

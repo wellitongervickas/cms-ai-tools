@@ -15,7 +15,7 @@ import { sharp } from "@repo/payload/sharp";
 import { plugins, PluginsOptions } from "@repo/payload/plugins";
 import { collections } from "@repo/payload/collections";
 import { Locale } from "@repo/payload/locales";
-
+import { globals } from "@repo/payload/globals";
 import { fileURLToPath } from "url";
 import path from "path";
 
@@ -82,6 +82,7 @@ export const getPayloadConfig = async ({
     }),
     sharp: sharp(),
     plugins: plugins(pluginsOptions),
+    globals: globals(),
   });
 
 export default getPayloadConfig;

@@ -1,5 +1,5 @@
 {
-  "id": "d56dd5cf-e710-4e60-be56-9682c43854ce",
+  "id": "20c83001-6398-465e-a26f-ce29330618b7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -2210,7 +2210,8 @@
           "type": "enum_resume_setups_export_format",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'markdown'"
         },
         "target_country": {
           "name": "target_country",
@@ -2398,9 +2399,15 @@
           "primaryKey": false,
           "notNull": false
         },
+        "system_prompt": {
+          "name": "system_prompt",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "prompt": {
           "name": "prompt",
-          "type": "jsonb",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -2652,11 +2659,12 @@
           "type": "enum_resume_exports_export_type",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'plainText'"
         },
         "plain_text_content": {
           "name": "plain_text_content",
-          "type": "jsonb",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -3624,6 +3632,45 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "public.openai": {
+      "name": "openai",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "general_model": {
+          "name": "general_model",
+          "type": "enum_openai_general_model",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'gpt-5'"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
@@ -3760,6 +3807,14 @@
       "schema": "public",
       "values": [
         "plainText"
+      ]
+    },
+    "public.enum_openai_general_model": {
+      "name": "enum_openai_general_model",
+      "schema": "public",
+      "values": [
+        "gpt-5",
+        "gpt-4.1"
       ]
     }
   },

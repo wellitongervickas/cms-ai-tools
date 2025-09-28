@@ -436,7 +436,7 @@ export interface ResumeExport {
   name?: string | null;
   status?: ('pending' | 'completed' | 'failed') | null;
   resume_setup?: (number | null) | ResumeSetup;
-  exportType?: ('plainText' | 'export') | null;
+  exportType?: 'plainText' | null;
   plainText?: {
     content?: {
       root: {
@@ -453,9 +453,6 @@ export interface ResumeExport {
       };
       [k: string]: unknown;
     } | null;
-  };
-  export?: {
-    file?: (number | Media)[] | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -470,10 +467,7 @@ export interface ResumeImport {
   id: number;
   owner?: (number | null) | User;
   name?: string | null;
-  /**
-   * Eg: Markdown, plaintext, etc.
-   */
-  importType?: ('plainText' | 'import') | null;
+  importType?: 'plainText' | null;
   plainText?: {
     content?: {
       root: {
@@ -490,9 +484,6 @@ export interface ResumeImport {
       };
       [k: string]: unknown;
     } | null;
-  };
-  import?: {
-    file?: (number | Media)[] | null;
   };
   resumeData?: (number | null) | ResumeDatum;
   updatedAt: string;
@@ -836,11 +827,6 @@ export interface ResumeImportsSelect<T extends boolean = true> {
     | {
         content?: T;
       };
-  import?:
-    | T
-    | {
-        file?: T;
-      };
   resumeData?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -859,11 +845,6 @@ export interface ResumeExportsSelect<T extends boolean = true> {
     | T
     | {
         content?: T;
-      };
-  export?:
-    | T
-    | {
-        file?: T;
       };
   updatedAt?: T;
   createdAt?: T;

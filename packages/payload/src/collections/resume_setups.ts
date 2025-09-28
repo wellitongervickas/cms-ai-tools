@@ -86,7 +86,7 @@ export const resumeSetups: CollectionConfig<"resume_setups"> = {
     {
       type: "join",
       name: "exports",
-      on: "resume_setup",
+      on: "resumeSetup",
       collection: "resume_exports",
       hasMany: true,
     },

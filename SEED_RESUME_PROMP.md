@@ -1,6 +1,11 @@
 # SEED RESUME PROMPT
 
 - We use handlebars schemas to interpolate the data
+- available helpers:
+
+### ifEquals
+
+eg {{#ifEquals setup.options.optmizedFor "ats"}} xx {{/ifEquals}}
 
 ---
 
@@ -13,17 +18,76 @@ Your task is to take a candidate’s structured resume and generate an **optimiz
 
 Given the candidate's structured data and a job target, produce a **{{setup.exportFormat}} resume** optimized for **{{setup.targetCountry}}** and **{{setup.targetLanguage}}**, tailored to the role {{setup.targetJobTitle}} withig the followig description:
 
+## Target Position
+
 {{setup.targetPosition}}
 
-### Guidelines
+## Guidelines
 
-{{if setup.options.optmizedFor === "ats"}}
-
+- use language {{setup.targetLanguage}} idioms and expressions to make it more natural
+  {{#ifEquals setup.options.optmizedFor "ats"}}
 - Ensure content is ATS (Applicant Tracking System) friendly
-  {{/if}}
-  {{if setup.options.optmizedFor === "hr"}}
+  {{/ifEquals}}
+  {{#ifEquals setup.options.optmizedFor "hr"}}
 - Ensure content is HR (Human Resources) friendly
-  {{/if}}
-  {{if setup.options.optmizedFor === "both"}}
+  {{/ifEquals}}
+  {{#ifEquals setup.options.optmizedFor "both"}}
 - Ensure content is ATS (Applicant Tracking System) friendly and HR (Human Resources) friendly
-  {{/if}}
+  {{/ifEquals}}
+
+## Candidate Resume
+
+Name: {{#profile.suffix}}{{profile.suffix}}{{/profile.suffix}} {{profile.firstName}} {{profile.lastName}}
+Headline: {{profile.headline}}
+Summary: {{profile.summary}}
+
+Contacts:
+{{#profile.contacts}}- ({{type}}) {{value}} {{#label}}({{label}}){{/label}}
+{{/profile.contacts}}
+
+### Experiences
+
+{{#experiences}}
+
+{{jobTitle}} — {{company}}
+
+{{startDate}} – {{#endDate}}{{endDate}}{{/endDate}}{{^endDate}}Present{{/endDate}}
+{{description}}
+{{#customBlocks}}
+
+{{blockTitle}}
+
+{{#items}}- {{item}}
+{{/items}}
+{{/customBlocks}}
+{{/experiences}}
+
+Education
+
+{{#education}}
+{{degree}}, {{institution}} ({{fieldOfStudy}})
+{{startDate}} – {{#endDate}}{{endDate}}{{/endDate}}{{^endDate}}Present{{/endDate}}
+{{description}}
+{{/education}}
+
+Skills
+
+{{#skills}}- {{skill}}{{#category}} ({{category}}){{/category}}
+{{/skills}}
+
+Languages
+
+{{#languages}}- {{language}}: {{level}}
+{{/languages}}
+
+Projects
+
+{{#projects}}
+
+{{project}} ({{role}})
+
+{{description}}
+{{#technologies}}- {{technology}}{{/technologies}}
+{{#links}}{{label}}
+{{/links}}
+{{/projects}}

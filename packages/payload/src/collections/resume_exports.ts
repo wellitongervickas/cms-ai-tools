@@ -46,7 +46,7 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
     },
     {
       type: "relationship",
-      name: "resume_setup",
+      name: "resumeSetup",
       label: "Resume Setup",
       relationTo: "resume_setups",
       hasMany: false,
@@ -79,32 +79,40 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
     },
   ],
   hooks: {
-    afterChange: [
-      async ({ data, operation, req }) => {
-        if (operation !== "create") return;
+    beforeRead: [
+      async ({ req, doc }) => {
+        if (doc?.status === ResumeExportStatus.COMPLETED) {
+          return;
+        }
+        if (doc?.status === ResumeExportStatus.FAILED) {
+          return;
+        }
 
         try {
-          const resumeSetup = await req.payload.findByID({
-            collection: "resume_setups",
-            id: data.resume_setup,
-          });
-
-          if (!resumeSetup.resumeData) {
-            throw new Error("Resume data not found");
+          if (!doc.resumeSetup) {
+            throw new Error("Resume setup not found");
           }
 
+          const resumeSetup = await req.payload.findByID({
+            collection: "resume_setups",
+            id: "id" in doc.resumeSetup ? doc.resumeSetup.id : doc.resumeSetup,
+          });
+
+          if (!resumeSetup?.resumeData) {
+            throw new Error("Resume data not found");
+          }
+          console.log(resumeSetup.resumeData);
           const resumeData = await req.payload.findByID({
             collection: "resume_data",
             id:
-              typeof resumeSetup.resumeData === "number"
-                ? resumeSetup.resumeData
-                : resumeSetup.resumeData.id,
+              typeof resumeSetup.resumeData === "object"
+                ? resumeSetup.resumeData.id
+                : resumeSetup.resumeData,
           });
-
           if (!resumeSetup.resumePrompt) {
             throw new Error("Resume prompt not found");
           }
-
+          console.log(resumeData);
           const prompt = await req.payload.findByID({
             collection: "resume_prompts",
             id:
@@ -112,49 +120,48 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
                 ? resumeSetup.resumePrompt
                 : resumeSetup.resumePrompt.id,
           });
-
           if (!prompt.prompt) {
             throw new Error("Prompt not found");
           }
-
           const globalOpenAI = await req.payload.findGlobal({
             slug: "openai",
           });
-
           Handlebars.registerHelper(
-            "if",
+            "ifEquals",
             function (
-              this: unknown,
-              condition: boolean,
+              this: any,
+              a: unknown,
+              b: unknown,
               options: Handlebars.HelperOptions
             ) {
-              return condition ? options.fn(this) : options.inverse(this);
+              if (!options || typeof options.fn !== "function") {
+                throw new Error(
+                  "ifEquals helper must be used as a block helper: {{#ifEquals a b}} ... {{/ifEquals}}"
+                );
+              }
+              return a === b ? options.fn(this) : options.inverse(this);
             }
           );
-
           const renderedPrompt = Handlebars.compile(prompt.prompt)({
             resume: resumeData,
             setup: resumeSetup,
           });
-
           const renderedSystemPrompt = Handlebars.compile(
             prompt.systemPrompt ?? ""
           )({
             resume: resumeData,
             setup: resumeSetup,
           });
-
-          if (data.exportFormat === ResumeExportType.PLAIN_TEXT) {
+          if (doc.exportFormat === ResumeExportType.PLAIN_TEXT) {
             if (resumeSetup.exportFormat === ResumeExportFormat.MARKDOWN) {
               const { text: generatedMarkdown } = await generateText({
                 model: openai(globalOpenAI.general.model),
                 prompt: renderedPrompt,
                 system: renderedSystemPrompt,
               });
-
               await req.payload.update({
                 collection: "resume_exports",
-                id: data.id,
+                id: doc.id,
                 data: {
                   status: ResumeExportStatus.COMPLETED,
                   plainText: {
@@ -172,7 +179,7 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
           req.payload.logger.error(error);
           await req.payload.update({
             collection: "resume_exports",
-            id: data.id,
+            id: doc.id,
             data: {
               status: ResumeExportStatus.FAILED,
             },

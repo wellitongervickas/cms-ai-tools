@@ -425,7 +425,7 @@ export interface ResumeExport {
   owner?: (number | null) | User;
   name?: string | null;
   status?: ('pending' | 'completed' | 'failed') | null;
-  resume_setup?: (number | null) | ResumeSetup;
+  resumeSetup?: (number | null) | ResumeSetup;
   exportType?: 'plainText' | null;
   plainText?: {
     content?: string | null;
@@ -815,7 +815,7 @@ export interface ResumeExportsSelect<T extends boolean = true> {
   owner?: T;
   name?: T;
   status?: T;
-  resume_setup?: T;
+  resumeSetup?: T;
   exportType?: T;
   plainText?:
     | T

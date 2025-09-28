@@ -5,6 +5,7 @@ import { getResumeSkillCategoryOptions } from "@repo/payload/utils/resumes";
 export const resumeSkills: CollectionConfig<"resume_skills"> = {
   slug: "resume_skills",
   admin: {
+    useAsTitle: "skill",
     description:
       "Resumes Skills are used to track the skills of the resumes of the users and are used as input data for the AI agents.",
   },

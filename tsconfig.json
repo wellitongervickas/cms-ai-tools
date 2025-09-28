@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "noEmit": true,
+    "baseUrl": ".",
+    "rootDir": "."
+  },
+  "references": [
+    { "path": "./packages/payload" },
+  ],
+  "include": ["${configDir}/src", "./scripts/**/*.ts"]
+}

@@ -1,0 +1,44 @@
+import type { CollectionConfig } from "payload";
+
+import { Role, byRole } from "@repo/payload/utils/roles";
+
+export const resumePrompts: CollectionConfig<"resume_prompts"> = {
+  slug: "resume_prompts",
+  admin: {
+    useAsTitle: "name",
+    description:
+      "Resumes Prompts are used to track the prompts of the resumes of the users and are used as input data for the AI agents.",
+  },
+  labels: {
+    singular: "Resume Prompt",
+    plural: "Resume Prompts",
+  },
+  fields: [
+    {
+      type: "text",
+      name: "name",
+      label: "Name",
+    },
+    {
+      type: "richText",
+      name: "prompt",
+      label: "Prompt",
+    },
+    {
+      type: "textarea",
+      name: "output",
+      label: "Output",
+      virtual: true,
+      admin: {
+        readOnly: true,
+      },
+    },
+  ],
+  access: {
+    read: byRole([Role.Admin]),
+    update: byRole([Role.Admin]),
+    create: byRole([Role.Admin]),
+    delete: byRole([Role.Admin]),
+    admin: byRole([Role.Admin]),
+  },
+};

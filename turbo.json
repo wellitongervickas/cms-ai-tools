@@ -1,0 +1,44 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "tui",
+  "globalDependencies": [".env"],
+  "globalEnv": [
+    "DATABASE_URI",
+    "PAYLOAD_SECRET",
+    "NEXT_PUBLIC_BASE_URL",
+    "CRON_SECRET",
+    "CI"
+  ],
+  "concurrency": "11",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "env": [
+        "DATABASE_URI",
+        "PAYLOAD_SECRET",
+        "CRON_SECRET",
+        "CI",
+        "NEXT_PUBLIC_BASE_URL"
+      ]
+    },
+    "test": {
+      "dependsOn": ["^test"]
+    },
+    "clean": {
+      "cache": false
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "dev": {
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

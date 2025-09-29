@@ -80,22 +80,25 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
     },
   ],
   hooks: {
-    beforeRead: [
-      async ({ req, doc }) => {
-        if (doc?.status === ResumeExportStatus.COMPLETED) {
-          return;
+    beforeChange: [
+      async ({ req, context, data }) => {
+        if (context.skipGeneration === true) {
+          return data;
         }
-        if (doc?.status === ResumeExportStatus.FAILED) {
-          return;
+        if (data?.status === ResumeExportStatus.COMPLETED) {
+          return data;
+        }
+        if (data?.status === ResumeExportStatus.FAILED) {
+          return data;
         }
 
         try {
           const resumeSetup = await req.payload.findByID({
             collection: "resume_setups",
             id:
-              typeof doc.resumeSetup === "number"
-                ? doc.resumeSetup
-                : doc.resumeSetup.id,
+              typeof data.resumeSetup === "number"
+                ? data.resumeSetup
+                : data.resumeSetup.id,
           });
 
           if (!resumeSetup?.resumeData) {
@@ -159,39 +162,33 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
             setup: resumeSetup,
           });
 
-          if (doc.exportFormat === ResumeExportType.PLAIN_TEXT) {
+          if (data.exportType === ResumeExportType.PLAIN_TEXT) {
             if (resumeSetup.exportFormat === ResumeExportFormat.MARKDOWN) {
               const { text: generatedMarkdown } = await generateText({
                 model: openai(globalOpenAI.general.model),
                 prompt: renderedPrompt,
                 system: renderedSystemPrompt,
               });
-              await req.payload.update({
-                collection: "resume_exports",
-                id: doc.id,
-                data: {
-                  status: ResumeExportStatus.COMPLETED,
-                  plainText: {
-                    content: generatedMarkdown,
-                  },
+
+              return {
+                ...data,
+                status: ResumeExportStatus.COMPLETED,
+                plainText: {
+                  content: generatedMarkdown,
                 },
-              });
+              };
             } else {
               throw new Error("Export format not supported");
             }
           } else {
-            throw new Error("Export format not supported");
+            throw new Error("Export type not supported");
           }
         } catch (error) {
           req.payload.logger.error(error);
-          await req.payload.update({
-            collection: "resume_exports",
-            id: doc.id,
-            data: {
-              status: ResumeExportStatus.FAILED,
-            },
-          });
+          data.status = ResumeExportStatus.FAILED;
         }
+
+        return data;
       },
     ],
   },

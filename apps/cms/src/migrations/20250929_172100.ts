@@ -257,6 +257,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"status" "enum_resume_exports_status" DEFAULT 'pending',
   	"resume_setup_id" integer,
   	"export_type" "enum_resume_exports_export_type" DEFAULT 'plainText',
+  	"plain_text_prompt" varchar,
+  	"plain_text_system_prompt" varchar,
   	"plain_text_content" varchar,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL

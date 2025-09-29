@@ -428,6 +428,8 @@ export interface ResumeExport {
   resumeSetup?: (number | null) | ResumeSetup;
   exportType?: 'plainText' | null;
   plainText?: {
+    prompt?: string | null;
+    systemPrompt?: string | null;
     content?: string | null;
   };
   updatedAt: string;
@@ -820,6 +822,8 @@ export interface ResumeExportsSelect<T extends boolean = true> {
   plainText?:
     | T
     | {
+        prompt?: T;
+        systemPrompt?: T;
         content?: T;
       };
   updatedAt?: T;

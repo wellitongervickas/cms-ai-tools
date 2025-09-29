@@ -1,7 +1,7 @@
 # SEED RESUME PROMPT
 
 - This file is used to generate the resume prompt using handlebars schemas to interpolate the data
-
+- helpers: https://handlebarsjs.com/guide/builtin-helpers.html, https://handlebarsjs.com/guide/block-helpers.html, https://handlebarsjs.com/guide/partials.html, https://handlebarsjs.com/guide/expressions.html
 ### available helpers:
 
 - ifEquals: {{#ifEquals setup.options.optmizedFor "ats"}} xx {{/ifEquals}}
@@ -79,7 +79,7 @@ Do not explain your choices. Output only the improved resume in Markdown.
 
 ## Promp
 
-Given the candidate's structured data and a job target, produce a **{{setup.exportFormat}} resume** optimized for **{{setup.targetCountry}}** and **{{setup.targetLanguage}}**, tailored to the role {{setup.targetJobTitle}} withig the followig description:
+Given structured resume data and a job target, produce a **{{setup.exportFormat}} resume** optimized for **{{setup.targetCountry}}** and **{{setup.targetLanguage}}**, tailored to the role {{setup.targetJobTitle}} withig the followig description:
 
 ## Target Position
 
@@ -87,19 +87,10 @@ Given the candidate's structured data and a job target, produce a **{{setup.expo
 
 ## Guidelines
 
-{{#setup.targetJobTitle}}
-
-- Matches the target job title.
-  {{/setup.targetJobTitle}}
-  {{#setup.targetLanguage}}
-- Matches the target language.
-  {{/setup.targetLanguage}}
-  {{#setup.targetPosition}}
-- Matches the target position.
-  {{/setup.targetPosition}}
-  {{#setup.targetCountry}}
-- Follows the correct format, summary/profile style, and cultural norms for {{setup.targetCountry}}.
-  {{/setup.targetCountry}}
+- Matches the target job title {{setup.targetJobTitle}}.
+- Matches the target language {{setup.targetLanguage}}.
+- Matches the target position {{setup.targetPosition}}.
+- Follows the correct format, summary/profile style, and cultural norms.
   {{#ifEquals setup.options.optmizedFor "ats"}}
 - Ensure content is ATS (Applicant Tracking System) friendly
   {{/ifEquals}}
@@ -112,77 +103,70 @@ Given the candidate's structured data and a job target, produce a **{{setup.expo
 
 ## Candidate Resume
 
+### Profile
+
 {{#resume.profile.avatar}}
 ![{{alt}}]({{url}})
 {{/resume.profile.avatar}}
-Name: {{#resume.profile.suffix}}{{resume.profile.suffix}}{{/resume.profile.suffix}} {{resume.profile.firstName}} {{#resume.profile.middleName}}{{resume.profile.middleName}}{{/resume.profile.middleName}} {{resume.profile.lastName}}
+Name: {{#if resume.profile.suffix}}{{resume.profile.suffix}}{{/if}} {{resume.profile.firstName}} {{#if resume.profile.middleName}}{{resume.profile.middleName}}{{/if}} {{resume.profile.lastName}}
 Headline: {{resume.profile.headline}}
 Summary: {{resume.profile.summary}}
 
-Contacts:
-{{#resume.profile.contacts}}- ({{type}}) {{value}} {{#label}}({{label}}){{/label}}
+### Contacts:
+
+{{#resume.profile.contacts}}
+- {{label}}: {{value}}
 {{/resume.profile.contacts}}
 
 ### Experiences
 
 {{#resume.experiences}}
-
-{{jobTitle}} — {{company}}
-
-{{startDate}} – {{#endDate}}{{endDate}}{{/endDate}}{{^endDate}}Present{{/endDate}}
-{{description}}
-{{#customBlocks}}
-{{blockTitle}}
-{{#items}}- {{item}}
-{{/items}}
-{{/customBlocks}}
+    {{jobTitle}} — {{company}}
+    {{#if type}}({{type}}){{/if}}
+    {{#if location}}({{location}}){{/if}}
+    {{startDate}} – {{#if endDate}}{{endDate}}{{/if}}
+    {{description}}
+    {{#skills}} - {{skill}}{{/skills}}
+    {{#tools}} - {{tool}}{{/tools}}
+    {{#technologies}} - {{technology}}{{/technologies}}
+    {{#customBlocks}}
+        **{{blockTitle}}**
+        {{#items}}- {{item}}{{/items}}
+    {{/customBlocks}}
 {{/resume.experiences}}
-
-### Skills
-
-{{#resume.skills}}
-
-- {{skill}}{{#category}} ({{category}}){{/category}}
-  {{/resume.skills}}
 
 ### Education
 
 {{#resume.education}}
-{{institution}} ({{fieldOfStudy}})
-{{startDate}} – {{#endDate}}{{endDate}}{{/endDate}}{{^endDate}}Present{{/endDate}}
-{{description}}
-{{#customBlocks}}
-{{blockTitle}}
-{{#items}}- {{item}}
-{{/items}}
-{{/customBlocks}}
+    {{institution}} ({{fieldOfStudy}})
+    {{startDate}} – {{#if endDate}}{{endDate}}{{/if}}
+    {{description}}
+    {{#customBlocks}}
+        {{blockTitle}}
+        {{#items}}- {{item}}{{/items}}
+    {{/customBlocks}}
 {{/resume.education}}
 
 ### Skills
 
 {{#resume.skills}}
-
-- {{skill}}{{#category}} ({{category}}){{/category}}
-  {{/resume.skills}}
+- {{skill}}{{#if category}}({{category}}){{/if}}
+{{/resume.skills}}
 
 ### Languages
-
 {{#resume.languages}}
+- {{language.language}}: {{level}}
+{{/resume.languages}}
 
-- {{language}}: {{level}}
-  {{/resume.languages}}
 
 ### Projects
-
 {{#resume.projects}}
-{{project}} ({{role}})
-{{description}}
-{{#technologies}}- {{technology}}{{/technologies}}
-{{#links}}{{label}}
-{{/links}}
-{{#customBlocks}}
-{{blockTitle}}
-{{#items}}- {{item}}
-{{/items}}
-{{/customBlocks}}
+    {{project}} ({{role}})
+    {{description}}
+    {{#technologies}} - {{technology}}{{/technologies}}
+    {{#links}}{{label}}: {{value}}{{/links}}
+    {{#customBlocks}}
+        {{blockTitle}}
+        {{#items}}- {{item}}{{/items}}
+    {{/customBlocks}}
 {{/resume.projects}}

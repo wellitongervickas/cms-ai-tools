@@ -65,6 +65,22 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
       fields: [
         {
           type: "textarea",
+          name: "prompt",
+          label: "Prompt",
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          type: "textarea",
+          name: "systemPrompt",
+          label: "System Prompt",
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          type: "textarea",
           name: "content",
           label: "Content",
           admin: {
@@ -175,6 +191,8 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
                 status: ResumeExportStatus.COMPLETED,
                 plainText: {
                   content: generatedMarkdown,
+                  prompt: renderedPrompt,
+                  systemPrompt: renderedSystemPrompt,
                 },
               };
             } else {

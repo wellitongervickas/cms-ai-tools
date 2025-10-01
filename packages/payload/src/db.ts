@@ -9,7 +9,8 @@ export type DBConfig = {
 
 export const db = (options: DBConfig): Config["db"] => {
   return postgresAdapter({
-    push: false,
+    /// @dev: allow when you need to sync database schemas if migrations are not working
+    // push: true,
     pool: {
       connectionString: options.pool.connectionString,
     },

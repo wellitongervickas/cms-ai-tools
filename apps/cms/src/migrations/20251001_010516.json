@@ -1,5 +1,5 @@
 {
-  "id": "2fb40559-500f-4398-973f-e5994c458d9a",
+  "id": "846ef6ad-565b-4102-aca5-3e9ea27974f0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -439,6 +439,170 @@
         "resume_data_profile_contacts_parent_id_fk": {
           "name": "resume_data_profile_contacts_parent_id_fk",
           "tableFrom": "resume_data_profile_contacts",
+          "tableTo": "resume_data",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.resume_data_profile_custom_blocks_items": {
+      "name": "resume_data_profile_custom_blocks_items",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "item": {
+          "name": "item",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "resume_data_profile_custom_blocks_items_order_idx": {
+          "name": "resume_data_profile_custom_blocks_items_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "resume_data_profile_custom_blocks_items_parent_id_idx": {
+          "name": "resume_data_profile_custom_blocks_items_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "resume_data_profile_custom_blocks_items_parent_id_fk": {
+          "name": "resume_data_profile_custom_blocks_items_parent_id_fk",
+          "tableFrom": "resume_data_profile_custom_blocks_items",
+          "tableTo": "resume_data_profile_custom_blocks",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.resume_data_profile_custom_blocks": {
+      "name": "resume_data_profile_custom_blocks",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "block_title": {
+          "name": "block_title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "resume_data_profile_custom_blocks_order_idx": {
+          "name": "resume_data_profile_custom_blocks_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "resume_data_profile_custom_blocks_parent_id_idx": {
+          "name": "resume_data_profile_custom_blocks_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "resume_data_profile_custom_blocks_parent_id_fk": {
+          "name": "resume_data_profile_custom_blocks_parent_id_fk",
+          "tableFrom": "resume_data_profile_custom_blocks",
           "tableTo": "resume_data",
           "columnsFrom": [
             "_parent_id"

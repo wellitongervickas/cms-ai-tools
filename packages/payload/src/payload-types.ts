@@ -207,6 +207,18 @@ export interface ResumeData {
       | null;
     headline?: string | null;
     summary?: string | null;
+    customBlocks?:
+      | {
+          blockTitle?: string | null;
+          items?:
+            | {
+                item?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   experiences?:
     | {
@@ -626,6 +638,18 @@ export interface ResumeDataSelect<T extends boolean = true> {
             };
         headline?: T;
         summary?: T;
+        customBlocks?:
+          | T
+          | {
+              blockTitle?: T;
+              items?:
+                | T
+                | {
+                    item?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
       };
   experiences?:
     | T

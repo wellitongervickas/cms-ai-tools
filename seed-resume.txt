@@ -87,11 +87,13 @@ Your role is to (if options are available):
   - If achievements are not measurable, focus on outcomes (e.g., “Improved system reliability” instead of “Responsible for system”).  
 - Ensure **ATS keyword alignment**:
   - Extract key terms from the target job description and integrate them naturally into Skills, Summary, and Experience (only if they exist in the candidate’s resume).  
-- Do not explain your choices. Output only the improved resume in Markdown.
+- Do not explain your choices. 
+- Output only the improved resume in {{setup.exportFormat}}.
 
 ## Promp
 
-Given structured resume data and a job target, produce a **{{setup.exportFormat}} resume** optimized for **{{setup.targetCountry}}** and **{{setup.targetLanguage}}**, tailored to the role {{setup.targetJobTitle}} withig the followig description:
+Given structured resume data and a job target, produce a **{{setup.exportFormat}} resume** optimized for **{{#if setup.targetCountry}}{{setup.targetCountry}}{{else}}world wide{{/if}}** 
+and **{{#if setup.targetLangua  ge}}{{setup.targetLanguage}}{{else}}english{{/if}}**, tailored to the role {{#if setup.targetJobTitle}}{{setup.targetJobTitle}}{{else}}base headline{{/if}} withig the followig description:
 
 ## Target Position
 
@@ -99,10 +101,18 @@ Given structured resume data and a job target, produce a **{{setup.exportFormat}
 
 ## Guidelines
 
+{{#if setup.targetJobTitle}}
 - Matches the target job title {{setup.targetJobTitle}}.
+{{/if}}
+{{#if setup.targetLanguage}}
 - Matches the target language {{setup.targetLanguage}}.
+{{/if}}
+{{#if setup.targetPosition}}
 - Matches the target position {{setup.targetPosition}}.
-- Follows the correct format, summary/profile style, and cultural norms.
+{{/if}}
+{{#if setup.targetCountry}}
+- Matches the target country {{setup.targetCountry}} (Follows the correct format, summary/profile style, and cultural norms)
+{{/if}}
   {{#ifEquals setup.options.optmizedFor "ats"}}
 - Ensure content is ATS (Applicant Tracking System) friendly
   {{/ifEquals}}
@@ -115,8 +125,6 @@ Given structured resume data and a job target, produce a **{{setup.exportFormat}
 
 ## Candidate Resume
 
-### Profile
-
 {{#resume.profile.avatar}}
 ![{{alt}}]({{url}})
 {{/resume.profile.avatar}}
@@ -124,61 +132,67 @@ Name: {{#if resume.profile.suffix}}{{resume.profile.suffix}}{{/if}} {{resume.pro
 Headline: {{resume.profile.headline}}
 Summary: {{resume.profile.summary}}
 
+
 ### Contacts:
 
-{{#resume.profile.contacts}}
+{{#each resume.profile.contacts}}
 - {{label}}: {{value}}
-{{/resume.profile.contacts}}
+{{/each}}
+
+{{#each resume.profile.customBlocks}}
+  **{{blockTitle}}**
+  {{#each items}}- {{item}}{{/each}}
+{{/each}}
 
 ### Experiences
 
-{{#resume.experiences}}
+{{#each resume.experiences}}
     {{jobTitle}} — {{company}}
     {{#if type}}({{type}}){{/if}}
     {{#if location}}({{location}}){{/if}}
     {{startDate}} – {{#if endDate}}{{endDate}}{{/if}}
     {{description}}
-    {{#skills}} - {{skill}}{{/skills}}
-    {{#tools}} - {{tool}}{{/tools}}
-    {{#technologies}} - {{technology}}{{/technologies}}
-    {{#customBlocks}}
+    {{#each skills}} - {{skill}}{{/each}}
+    {{#each tools}} - {{tool}}{{/each}}
+    {{#each technologies}} - {{technology}}{{/each}}
+    {{#each customBlocks}}
         **{{blockTitle}}**
-        {{#items}}- {{item}}{{/items}}
-    {{/customBlocks}}
-{{/resume.experiences}}
+        {{#each items}}- {{item}}{{/each}}
+    {{/each}}
+{{/each}}
 
 ### Education
 
-{{#resume.education}}
+{{#each resume.education}}
     {{institution}} ({{fieldOfStudy}})
     {{startDate}} – {{#if endDate}}{{endDate}}{{/if}}
     {{description}}
-    {{#customBlocks}}
+    {{#each customBlocks}}
         {{blockTitle}}
-        {{#items}}- {{item}}{{/items}}
-    {{/customBlocks}}
-{{/resume.education}}
+        {{#each items}}- {{item}}{{/each}}
+    {{/each}}
+{{/each}}
 
 ### Skills
 
-{{#resume.skills}}
-- {{skill}}{{#if category}}({{category}}){{/if}}
-{{/resume.skills}}
+{{#each resume.skills}}
+- {{skill}}{{#if category}} ({{category}}){{/if}}
+{{/each}}
 
 ### Languages
-{{#resume.languages}}
+{{#each resume.languages}}
 - {{language.language}}: {{level}}
-{{/resume.languages}}
+{{/each}}
 
 
 ### Projects
-{{#resume.projects}}
+{{#each resume.projects}}
     {{project}} ({{role}})
     {{description}}
-    {{#technologies}} - {{technology}}{{/technologies}}
-    {{#links}}{{label}}: {{value}}{{/links}}
-    {{#customBlocks}}
+    {{#each technologies}} - {{technology}}{{/each}}
+    {{#each links}} {{label}}: {{value}}{{/each}}
+    {{#each customBlocks}}
         {{blockTitle}}
-        {{#items}}- {{item}}{{/items}}
-    {{/customBlocks}}
-{{/resume.projects}}
+        {{#each items}}- {{item}}{{/each}}
+    {{/each}}
+{{/each}}

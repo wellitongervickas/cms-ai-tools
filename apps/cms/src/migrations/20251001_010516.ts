@@ -63,6 +63,20 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"label" varchar
   );
   
+  CREATE TABLE "resume_data_profile_custom_blocks_items" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"item" varchar
+  );
+  
+  CREATE TABLE "resume_data_profile_custom_blocks" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"block_title" varchar
+  );
+  
   CREATE TABLE "resume_data_experiences_custom_blocks_items" (
   	"_order" integer NOT NULL,
   	"_parent_id" varchar NOT NULL,
@@ -322,6 +336,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   ALTER TABLE "users_sessions" ADD CONSTRAINT "users_sessions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "resume_data_profile_contacts" ADD CONSTRAINT "resume_data_profile_contacts_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."resume_data"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "resume_data_profile_custom_blocks_items" ADD CONSTRAINT "resume_data_profile_custom_blocks_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."resume_data_profile_custom_blocks"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "resume_data_profile_custom_blocks" ADD CONSTRAINT "resume_data_profile_custom_blocks_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."resume_data"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "resume_data_experiences_custom_blocks_items" ADD CONSTRAINT "resume_data_experiences_custom_blocks_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."resume_data_experiences_custom_blocks"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "resume_data_experiences_custom_blocks" ADD CONSTRAINT "resume_data_experiences_custom_blocks_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."resume_data_experiences"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "resume_data_experiences" ADD CONSTRAINT "resume_data_experiences_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."resume_data"("id") ON DELETE cascade ON UPDATE no action;
@@ -371,6 +387,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE UNIQUE INDEX "media_filename_idx" ON "media" USING btree ("filename");
   CREATE INDEX "resume_data_profile_contacts_order_idx" ON "resume_data_profile_contacts" USING btree ("_order");
   CREATE INDEX "resume_data_profile_contacts_parent_id_idx" ON "resume_data_profile_contacts" USING btree ("_parent_id");
+  CREATE INDEX "resume_data_profile_custom_blocks_items_order_idx" ON "resume_data_profile_custom_blocks_items" USING btree ("_order");
+  CREATE INDEX "resume_data_profile_custom_blocks_items_parent_id_idx" ON "resume_data_profile_custom_blocks_items" USING btree ("_parent_id");
+  CREATE INDEX "resume_data_profile_custom_blocks_order_idx" ON "resume_data_profile_custom_blocks" USING btree ("_order");
+  CREATE INDEX "resume_data_profile_custom_blocks_parent_id_idx" ON "resume_data_profile_custom_blocks" USING btree ("_parent_id");
   CREATE INDEX "resume_data_experiences_custom_blocks_items_order_idx" ON "resume_data_experiences_custom_blocks_items" USING btree ("_order");
   CREATE INDEX "resume_data_experiences_custom_blocks_items_parent_id_idx" ON "resume_data_experiences_custom_blocks_items" USING btree ("_parent_id");
   CREATE INDEX "resume_data_experiences_custom_blocks_order_idx" ON "resume_data_experiences_custom_blocks" USING btree ("_order");
@@ -461,6 +481,8 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "users" CASCADE;
   DROP TABLE "media" CASCADE;
   DROP TABLE "resume_data_profile_contacts" CASCADE;
+  DROP TABLE "resume_data_profile_custom_blocks_items" CASCADE;
+  DROP TABLE "resume_data_profile_custom_blocks" CASCADE;
   DROP TABLE "resume_data_experiences_custom_blocks_items" CASCADE;
   DROP TABLE "resume_data_experiences_custom_blocks" CASCADE;
   DROP TABLE "resume_data_experiences" CASCADE;

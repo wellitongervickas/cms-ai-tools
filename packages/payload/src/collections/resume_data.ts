@@ -135,6 +135,28 @@ export const resumeData: CollectionConfig<"resume_data"> = {
             },
           ],
         },
+        {
+          type: "array",
+          name: "customBlocks",
+          fields: [
+            {
+              type: "text",
+              name: "blockTitle",
+              label: "Block Title",
+            },
+            {
+              type: "array",
+              name: "items",
+              fields: [
+                {
+                  type: "text",
+                  name: "item",
+                  label: "Item",
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
     {

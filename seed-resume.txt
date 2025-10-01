@@ -108,7 +108,7 @@ and **{{#if setup.targetLangua  ge}}{{setup.targetLanguage}}{{else}}english{{/if
 - Matches the target language {{setup.targetLanguage}}.
 {{/if}}
 {{#if setup.targetPosition}}
-- Matches the target position {{setup.targetPosition}}.
+- Matches the target position.
 {{/if}}
 {{#if setup.targetCountry}}
 - Matches the target country {{setup.targetCountry}} (Follows the correct format, summary/profile style, and cultural norms)

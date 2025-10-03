@@ -10,11 +10,11 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum_resume_skills_category" AS ENUM('programming', 'design', 'marketing', 'sales', 'business', 'finance', 'education', 'other');
   CREATE TYPE "public"."enum_resume_technologies_type" AS ENUM('framework', 'language', 'library', 'protocol', 'platform', 'database', 'cloud', 'devops', 'testing', 'security', 'ai', 'machine_learning', 'data_science', 'big_data', 'blockchain', 'internet_of_things', 'robotics', 'other');
   CREATE TYPE "public"."enum_resume_tools_category" AS ENUM('financial', 'marketing', 'sales', 'business', 'finance', 'education', 'other');
-  CREATE TYPE "public"."enum_resume_setups_export_format" AS ENUM('markdown');
+  CREATE TYPE "public"."enum_resume_setups_export_format" AS ENUM('markdown', 'pdf');
   CREATE TYPE "public"."enum_resume_setups_options_optmized_for" AS ENUM('ats', 'hr', 'both');
   CREATE TYPE "public"."enum_resume_imports_import_type" AS ENUM('plainText');
   CREATE TYPE "public"."enum_resume_exports_status" AS ENUM('pending', 'completed', 'failed');
-  CREATE TYPE "public"."enum_resume_exports_export_type" AS ENUM('plainText');
+  CREATE TYPE "public"."enum_resume_exports_export_type" AS ENUM('plainText', 'file');
   CREATE TYPE "public"."enum_openai_general_model" AS ENUM('gpt-5', 'gpt-4.1');
   CREATE TABLE "users_sessions" (
   	"_order" integer NOT NULL,
@@ -51,7 +51,37 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"width" numeric,
   	"height" numeric,
   	"focal_x" numeric,
-  	"focal_y" numeric
+  	"focal_y" numeric,
+  	"sizes_icon_url" varchar,
+  	"sizes_icon_width" numeric,
+  	"sizes_icon_height" numeric,
+  	"sizes_icon_mime_type" varchar,
+  	"sizes_icon_filesize" numeric,
+  	"sizes_icon_filename" varchar,
+  	"sizes_thumbnail_url" varchar,
+  	"sizes_thumbnail_width" numeric,
+  	"sizes_thumbnail_height" numeric,
+  	"sizes_thumbnail_mime_type" varchar,
+  	"sizes_thumbnail_filesize" numeric,
+  	"sizes_thumbnail_filename" varchar,
+  	"sizes_small_url" varchar,
+  	"sizes_small_width" numeric,
+  	"sizes_small_height" numeric,
+  	"sizes_small_mime_type" varchar,
+  	"sizes_small_filesize" numeric,
+  	"sizes_small_filename" varchar,
+  	"sizes_medium_url" varchar,
+  	"sizes_medium_width" numeric,
+  	"sizes_medium_height" numeric,
+  	"sizes_medium_mime_type" varchar,
+  	"sizes_medium_filesize" numeric,
+  	"sizes_medium_filename" varchar,
+  	"sizes_large_url" varchar,
+  	"sizes_large_width" numeric,
+  	"sizes_large_height" numeric,
+  	"sizes_large_mime_type" varchar,
+  	"sizes_large_filesize" numeric,
+  	"sizes_large_filename" varchar
   );
   
   CREATE TABLE "resume_data_profile_contacts" (
@@ -271,9 +301,10 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"status" "enum_resume_exports_status" DEFAULT 'pending',
   	"resume_setup_id" integer,
   	"export_type" "enum_resume_exports_export_type" DEFAULT 'plainText',
-  	"plain_text_prompt" varchar,
-  	"plain_text_system_prompt" varchar,
+  	"prompt" varchar,
+  	"system_prompt" varchar,
   	"plain_text_content" varchar,
+  	"file_data_id" integer,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
@@ -363,6 +394,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "resume_imports" ADD CONSTRAINT "resume_imports_resume_data_id_resume_data_id_fk" FOREIGN KEY ("resume_data_id") REFERENCES "public"."resume_data"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "resume_exports" ADD CONSTRAINT "resume_exports_owner_id_users_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "resume_exports" ADD CONSTRAINT "resume_exports_resume_setup_id_resume_setups_id_fk" FOREIGN KEY ("resume_setup_id") REFERENCES "public"."resume_setups"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "resume_exports" ADD CONSTRAINT "resume_exports_file_data_id_media_id_fk" FOREIGN KEY ("file_data_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."payload_locked_documents"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_media_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE cascade ON UPDATE no action;
@@ -385,6 +417,11 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "media_updated_at_idx" ON "media" USING btree ("updated_at");
   CREATE INDEX "media_created_at_idx" ON "media" USING btree ("created_at");
   CREATE UNIQUE INDEX "media_filename_idx" ON "media" USING btree ("filename");
+  CREATE INDEX "media_sizes_icon_sizes_icon_filename_idx" ON "media" USING btree ("sizes_icon_filename");
+  CREATE INDEX "media_sizes_thumbnail_sizes_thumbnail_filename_idx" ON "media" USING btree ("sizes_thumbnail_filename");
+  CREATE INDEX "media_sizes_small_sizes_small_filename_idx" ON "media" USING btree ("sizes_small_filename");
+  CREATE INDEX "media_sizes_medium_sizes_medium_filename_idx" ON "media" USING btree ("sizes_medium_filename");
+  CREATE INDEX "media_sizes_large_sizes_large_filename_idx" ON "media" USING btree ("sizes_large_filename");
   CREATE INDEX "resume_data_profile_contacts_order_idx" ON "resume_data_profile_contacts" USING btree ("_order");
   CREATE INDEX "resume_data_profile_contacts_parent_id_idx" ON "resume_data_profile_contacts" USING btree ("_parent_id");
   CREATE INDEX "resume_data_profile_custom_blocks_items_order_idx" ON "resume_data_profile_custom_blocks_items" USING btree ("_order");
@@ -445,6 +482,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "resume_imports_created_at_idx" ON "resume_imports" USING btree ("created_at");
   CREATE INDEX "resume_exports_owner_idx" ON "resume_exports" USING btree ("owner_id");
   CREATE INDEX "resume_exports_resume_setup_idx" ON "resume_exports" USING btree ("resume_setup_id");
+  CREATE INDEX "resume_exports_file_file_data_idx" ON "resume_exports" USING btree ("file_data_id");
   CREATE INDEX "resume_exports_updated_at_idx" ON "resume_exports" USING btree ("updated_at");
   CREATE INDEX "resume_exports_created_at_idx" ON "resume_exports" USING btree ("created_at");
   CREATE INDEX "payload_locked_documents_global_slug_idx" ON "payload_locked_documents" USING btree ("global_slug");

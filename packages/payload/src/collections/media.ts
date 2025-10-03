@@ -1,10 +1,14 @@
 import type { CollectionConfig } from "payload";
-import { noOne } from "@repo/payload/utils/roles";
+import { byRole, Role } from "@repo/payload/utils/roles";
+import { mimeTypes, formatOptions, imageSizes } from "../utils/upload.js";
 
 export const media: CollectionConfig = {
   slug: "media",
-  admin: {
-    hidden: true,
+
+  upload: {
+    formatOptions: formatOptions(),
+    mimeTypes: mimeTypes(),
+    imageSizes: imageSizes(),
   },
   fields: [
     {
@@ -14,11 +18,10 @@ export const media: CollectionConfig = {
     },
   ],
   access: {
-    read: noOne,
-    update: noOne,
-    create: noOne,
-    delete: noOne,
-    admin: noOne,
+    read: byRole([Role.Admin]),
+    update: byRole([Role.Admin]),
+    create: byRole([Role.Admin]),
+    delete: byRole([Role.Admin]),
+    admin: byRole([Role.Admin]),
   },
-  upload: true,
 };

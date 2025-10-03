@@ -8,7 +8,8 @@
     "NEXT_PUBLIC_BASE_URL",
     "CRON_SECRET",
     "CI",
-    "OPENAI_API_KEY"
+    "OPENAI_API_KEY",
+    "!"
   ],
   "concurrency": "11",
   "tasks": {
@@ -25,7 +26,8 @@
         "CRON_SECRET",
         "CI",
         "NEXT_PUBLIC_BASE_URL",
-        "OPENAI_API_KEY"
+        "OPENAI_API_KEY",
+        "BLOB_READ_WRITE_TOKEN"
       ]
     },
     "test": {

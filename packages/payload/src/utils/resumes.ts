@@ -23,6 +23,7 @@ export const getResumeOptmizedForOptions = () => {
 
 export enum ResumeExportFormat {
   MARKDOWN = "markdown",
+  PDF = "pdf",
 }
 
 export const getResumeExportFormatOptions = () => {
@@ -31,11 +32,16 @@ export const getResumeExportFormatOptions = () => {
       value: ResumeExportFormat.MARKDOWN,
       label: "Markdown",
     },
+    {
+      value: ResumeExportFormat.PDF,
+      label: "PDF",
+    },
   ];
 };
 
 export enum ResumeExportType {
   PLAIN_TEXT = "plainText",
+  FILE = "file",
 }
 
 export const getResumeExportTypeOptions = () => {
@@ -43,6 +49,10 @@ export const getResumeExportTypeOptions = () => {
     {
       value: ResumeExportType.PLAIN_TEXT,
       label: "Plain Text",
+    },
+    {
+      value: ResumeExportType.FILE,
+      label: "File",
     },
   ];
 };

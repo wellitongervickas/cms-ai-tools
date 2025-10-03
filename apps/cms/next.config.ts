@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
     }
 
     webpackConfig.resolve.alias.handlebars = 'handlebars/dist/handlebars.js'
+    // webpackConfig.resolve.alias.md_to_pdf = 'md-to-pdf/dist/index.js'
+    webpackConfig.module.exprContextCritical = false
 
     return webpackConfig
   },

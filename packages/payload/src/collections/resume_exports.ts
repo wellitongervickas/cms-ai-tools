@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { CollectionConfig } from "payload";
+import { mdToPdf } from "md-to-pdf";
+import path from "path";
 
 import { Role, byRole } from "@repo/payload/utils/roles";
 
@@ -16,6 +18,15 @@ import { ownerField } from "@repo/payload/collections/fields/owner";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import Handlebars from "handlebars";
+import kebabCase from "lodash/kebabCase.js";
+
+// import path from "path";
+// import { fileURLToPath } from "url";
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+/// the file is in the current folder and called resume_exports.css
+// const cssPath = path.join(__dirname, "resume_exports.css");
 
 export const resumeExports: CollectionConfig<"resume_exports"> = {
   slug: "resume_exports",
@@ -60,25 +71,25 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
       options: getResumeExportTypeOptions(),
     },
     {
+      type: "textarea",
+      name: "prompt",
+      label: "Prompt",
+      admin: {
+        readOnly: true,
+      },
+    },
+    {
+      type: "textarea",
+      name: "systemPrompt",
+      label: "System Prompt",
+      admin: {
+        readOnly: true,
+      },
+    },
+    {
       type: "group",
       name: "plainText",
       fields: [
-        {
-          type: "textarea",
-          name: "prompt",
-          label: "Prompt",
-          admin: {
-            readOnly: true,
-          },
-        },
-        {
-          type: "textarea",
-          name: "systemPrompt",
-          label: "System Prompt",
-          admin: {
-            readOnly: true,
-          },
-        },
         {
           type: "textarea",
           name: "content",
@@ -91,6 +102,24 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
       admin: {
         condition: (_, siblingData) => {
           return siblingData?.exportType === ResumeExportType.PLAIN_TEXT;
+        },
+      },
+    },
+    {
+      type: "group",
+      name: "file",
+      label: "File",
+      fields: [
+        {
+          type: "relationship",
+          name: "data",
+          relationTo: "media",
+          hasMany: false,
+        },
+      ],
+      admin: {
+        condition: (_, siblingData) => {
+          return siblingData?.exportType === ResumeExportType.FILE;
         },
       },
     },
@@ -189,10 +218,65 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
               return {
                 ...data,
                 status: ResumeExportStatus.COMPLETED,
+                prompt: renderedPrompt,
+                systemPrompt: renderedSystemPrompt,
                 plainText: {
                   content: generatedMarkdown,
-                  prompt: renderedPrompt,
-                  systemPrompt: renderedSystemPrompt,
+                },
+              };
+            } else {
+              throw new Error("Export format not supported");
+            }
+          } else if (data.exportType === ResumeExportType.FILE) {
+            if (resumeSetup.exportFormat === ResumeExportFormat.PDF) {
+              const { content: generatedPdfBuffer } = await mdToPdf(
+                {
+                  content: renderedPrompt,
+                },
+                {
+                  stylesheet: [
+                    path.resolve("node_modules/highlight.js/styles/github.css"),
+                  ],
+                  body_class: ["markdown-body"],
+                  document_title: resumeData.name || "resume",
+                  css: `
+                    @page {
+                      size: A4;
+                      margin: 20mm;
+                    }
+
+                    .page-break { page-break-after: always; }
+                    .markdown-body { font-size: 11px; }
+                    .markdown-body pre > code { white-space: pre-wrap; }
+                  `,
+                  pdf_options: {
+                    format: "A4",
+                  },
+                }
+              );
+
+              // const imageBuffer = Buffer.from(generatedPdfBuffer);
+
+              const uploadedFile = await req.payload.create({
+                file: {
+                  data: generatedPdfBuffer,
+                  mimetype: "application/pdf",
+                  size: generatedPdfBuffer.BYTES_PER_ELEMENT,
+                  name: kebabCase(resumeData.name || "image"),
+                },
+                data: {
+                  alt: resumeData.name || "image",
+                },
+                collection: "media",
+              });
+
+              return {
+                ...data,
+                status: ResumeExportStatus.COMPLETED,
+                prompt: renderedPrompt,
+                systemPrompt: renderedSystemPrompt,
+                file: {
+                  data: uploadedFile.id,
                 },
               };
             } else {

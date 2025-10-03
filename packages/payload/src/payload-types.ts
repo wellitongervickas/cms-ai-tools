@@ -182,6 +182,48 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    icon?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    small?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    medium?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -396,7 +438,7 @@ export interface ResumeSetup {
   description?: string | null;
   resumeData?: (number | null) | ResumeData;
   resumePrompt?: (number | null) | ResumePrompt;
-  exportFormat?: 'markdown' | null;
+  exportFormat?: ('markdown' | 'pdf') | null;
   targetCountry?: string | null;
   targetLanguage?: string | null;
   targetJobTitle?: string | null;
@@ -438,11 +480,14 @@ export interface ResumeExport {
   name?: string | null;
   status?: ('pending' | 'completed' | 'failed') | null;
   resumeSetup?: (number | null) | ResumeSetup;
-  exportType?: 'plainText' | null;
+  exportType?: ('plainText' | 'file') | null;
+  prompt?: string | null;
+  systemPrompt?: string | null;
   plainText?: {
-    prompt?: string | null;
-    systemPrompt?: string | null;
     content?: string | null;
+  };
+  file?: {
+    data?: (number | null) | Media;
   };
   updatedAt: string;
   createdAt: string;
@@ -612,6 +657,60 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        icon?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        small?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        medium?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        large?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -843,12 +942,17 @@ export interface ResumeExportsSelect<T extends boolean = true> {
   status?: T;
   resumeSetup?: T;
   exportType?: T;
+  prompt?: T;
+  systemPrompt?: T;
   plainText?:
     | T
     | {
-        prompt?: T;
-        systemPrompt?: T;
         content?: T;
+      };
+  file?:
+    | T
+    | {
+        data?: T;
       };
   updatedAt?: T;
   createdAt?: T;

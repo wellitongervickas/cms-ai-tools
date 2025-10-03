@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { CollectionConfig } from "payload";
 import { mdToPdf } from "md-to-pdf";
-import path from "path";
 
 import { Role, byRole } from "@repo/payload/utils/roles";
 
@@ -19,14 +18,6 @@ import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import Handlebars from "handlebars";
 import kebabCase from "lodash/kebabCase.js";
-
-// import path from "path";
-// import { fileURLToPath } from "url";
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-/// the file is in the current folder and called resume_exports.css
-// const cssPath = path.join(__dirname, "resume_exports.css");
 
 export const resumeExports: CollectionConfig<"resume_exports"> = {
   slug: "resume_exports",
@@ -234,9 +225,7 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
                   content: renderedPrompt,
                 },
                 {
-                  stylesheet: [
-                    path.resolve("node_modules/highlight.js/styles/github.css"),
-                  ],
+                  highlight_style: "github",
                   body_class: ["markdown-body"],
                   document_title: resumeData.name || "resume",
                   css: `

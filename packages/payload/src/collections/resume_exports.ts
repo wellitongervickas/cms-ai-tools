@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { CollectionConfig } from "payload";
-import { mdToPdf } from "md-to-pdf";
 
 import { Role, byRole } from "@repo/payload/utils/roles";
 
@@ -18,6 +16,7 @@ import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import Handlebars from "handlebars";
 import kebabCase from "lodash/kebabCase.js";
+import { markdownToPDF } from "@repo/payload/utils/files";
 
 export const resumeExports: CollectionConfig<"resume_exports"> = {
   slug: "resume_exports",
@@ -172,7 +171,7 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
           Handlebars.registerHelper(
             "ifEquals",
             function (
-              this: any,
+              this: unknown,
               a: unknown,
               b: unknown,
               options: Handlebars.HelperOptions
@@ -198,14 +197,14 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
             setup: resumeSetup,
           });
 
+          const { text: generatedMarkdown } = await generateText({
+            model: openai(globalOpenAI.general.model),
+            prompt: renderedPrompt,
+            system: renderedSystemPrompt,
+          });
+
           if (data.exportType === ResumeExportType.PLAIN_TEXT) {
             if (resumeSetup.exportFormat === ResumeExportFormat.MARKDOWN) {
-              const { text: generatedMarkdown } = await generateText({
-                model: openai(globalOpenAI.general.model),
-                prompt: renderedPrompt,
-                system: renderedSystemPrompt,
-              });
-
               return {
                 ...data,
                 status: ResumeExportStatus.COMPLETED,
@@ -220,37 +219,13 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
             }
           } else if (data.exportType === ResumeExportType.FILE) {
             if (resumeSetup.exportFormat === ResumeExportFormat.PDF) {
-              const { content: generatedPdfBuffer } = await mdToPdf(
-                {
-                  content: renderedPrompt,
-                },
-                {
-                  highlight_style: "github",
-                  body_class: ["markdown-body"],
-                  document_title: resumeData.name || "resume",
-                  css: `
-                    @page {
-                      size: A4;
-                      margin: 20mm;
-                    }
-
-                    .page-break { page-break-after: always; }
-                    .markdown-body { font-size: 11px; }
-                    .markdown-body pre > code { white-space: pre-wrap; }
-                  `,
-                  pdf_options: {
-                    format: "A4",
-                  },
-                }
-              );
-
-              // const imageBuffer = Buffer.from(generatedPdfBuffer);
+              const generatedPdfBuffer = await markdownToPDF(generatedMarkdown);
 
               const uploadedFile = await req.payload.create({
                 file: {
                   data: generatedPdfBuffer,
                   mimetype: "application/pdf",
-                  size: generatedPdfBuffer.BYTES_PER_ELEMENT,
+                  size: Buffer.byteLength(generatedPdfBuffer), // safe for Node 18+
                   name: kebabCase(resumeData.name || "image"),
                 },
                 data: {

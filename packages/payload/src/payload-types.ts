@@ -438,7 +438,6 @@ export interface ResumeSetup {
   description?: string | null;
   resumeData?: (number | null) | ResumeData;
   resumePrompt?: (number | null) | ResumePrompt;
-  exportFormat?: ('markdown' | 'pdf') | null;
   targetCountry?: string | null;
   targetLanguage?: string | null;
   targetJobTitle?: string | null;
@@ -890,7 +889,6 @@ export interface ResumeSetupsSelect<T extends boolean = true> {
   description?: T;
   resumeData?: T;
   resumePrompt?: T;
-  exportFormat?: T;
   targetCountry?: T;
   targetLanguage?: T;
   targetJobTitle?: T;

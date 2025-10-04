@@ -1,7 +1,8 @@
 # CMS AI Tools
 
-## Features for who is looking for a job
+PayloadCMS with Vercel AI SDK tool to generate resumes
 
-### Resumes
+## Features
 
-- AI Agent togenerate resume for a given job description, country and industry from a given template.
+- Generate resume for a given job description, country and language from a given template.
+- Export a plain text as markdown or a file as pdf.

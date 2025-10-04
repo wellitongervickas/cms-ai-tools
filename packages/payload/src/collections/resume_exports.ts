@@ -7,7 +7,6 @@ import {
   getResumeExportTypeOptions,
   getResumeExportStatusOptions,
   ResumeExportType,
-  ResumeExportFormat,
 } from "@repo/payload/utils/resumes";
 
 import { ownerField } from "@repo/payload/collections/fields/owner";
@@ -42,9 +41,6 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
       label: "Status",
       defaultValue: ResumeExportStatus.PENDING,
       options: getResumeExportStatusOptions(),
-      admin: {
-        readOnly: true,
-      },
     },
     {
       type: "relationship",
@@ -204,48 +200,40 @@ export const resumeExports: CollectionConfig<"resume_exports"> = {
           });
 
           if (data.exportType === ResumeExportType.PLAIN_TEXT) {
-            if (resumeSetup.exportFormat === ResumeExportFormat.MARKDOWN) {
-              return {
-                ...data,
-                status: ResumeExportStatus.COMPLETED,
-                prompt: renderedPrompt,
-                systemPrompt: renderedSystemPrompt,
-                plainText: {
-                  content: generatedMarkdown,
-                },
-              };
-            } else {
-              throw new Error("Export format not supported");
-            }
+            return {
+              ...data,
+              status: ResumeExportStatus.COMPLETED,
+              prompt: renderedPrompt,
+              systemPrompt: renderedSystemPrompt,
+              plainText: {
+                content: generatedMarkdown,
+              },
+            };
           } else if (data.exportType === ResumeExportType.FILE) {
-            if (resumeSetup.exportFormat === ResumeExportFormat.PDF) {
-              const generatedPdfBuffer = await markdownToPDF(generatedMarkdown);
+            const generatedPdfBuffer = await markdownToPDF(generatedMarkdown);
 
-              const uploadedFile = await req.payload.create({
-                file: {
-                  data: generatedPdfBuffer,
-                  mimetype: "application/pdf",
-                  size: Buffer.byteLength(generatedPdfBuffer), // safe for Node 18+
-                  name: kebabCase(resumeData.name || "image"),
-                },
-                data: {
-                  alt: resumeData.name || "image",
-                },
-                collection: "media",
-              });
+            const uploadedFile = await req.payload.create({
+              file: {
+                data: generatedPdfBuffer,
+                mimetype: "application/pdf",
+                size: Buffer.byteLength(generatedPdfBuffer), // safe for Node 18+
+                name: kebabCase(resumeData.name + crypto.randomUUID()),
+              },
+              data: {
+                alt: resumeData.name || "image",
+              },
+              collection: "media",
+            });
 
-              return {
-                ...data,
-                status: ResumeExportStatus.COMPLETED,
-                prompt: renderedPrompt,
-                systemPrompt: renderedSystemPrompt,
-                file: {
-                  data: uploadedFile.id,
-                },
-              };
-            } else {
-              throw new Error("Export format not supported");
-            }
+            return {
+              ...data,
+              status: ResumeExportStatus.COMPLETED,
+              prompt: renderedPrompt,
+              systemPrompt: renderedSystemPrompt,
+              file: {
+                data: uploadedFile.id,
+              },
+            };
           } else {
             throw new Error("Export type not supported");
           }

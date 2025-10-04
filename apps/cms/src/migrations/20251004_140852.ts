@@ -10,7 +10,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum_resume_skills_category" AS ENUM('programming', 'design', 'marketing', 'sales', 'business', 'finance', 'education', 'other');
   CREATE TYPE "public"."enum_resume_technologies_type" AS ENUM('framework', 'language', 'library', 'protocol', 'platform', 'database', 'cloud', 'devops', 'testing', 'security', 'ai', 'machine_learning', 'data_science', 'big_data', 'blockchain', 'internet_of_things', 'robotics', 'other');
   CREATE TYPE "public"."enum_resume_tools_category" AS ENUM('financial', 'marketing', 'sales', 'business', 'finance', 'education', 'other');
-  CREATE TYPE "public"."enum_resume_setups_export_format" AS ENUM('markdown', 'pdf');
   CREATE TYPE "public"."enum_resume_setups_options_optmized_for" AS ENUM('ats', 'hr', 'both');
   CREATE TYPE "public"."enum_resume_imports_import_type" AS ENUM('plainText');
   CREATE TYPE "public"."enum_resume_exports_status" AS ENUM('pending', 'completed', 'failed');
@@ -264,12 +263,11 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"description" varchar,
   	"resume_data_id" integer,
   	"resume_prompt_id" integer,
-  	"export_format" "enum_resume_setups_export_format" DEFAULT 'markdown',
   	"target_country" varchar,
   	"target_language" varchar,
   	"target_job_title" varchar,
   	"target_position" varchar,
-  	"options_optmized_for" "enum_resume_setups_options_optmized_for",
+  	"options_optmized_for" "enum_resume_setups_options_optmized_for" DEFAULT 'both',
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
@@ -556,7 +554,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_resume_skills_category";
   DROP TYPE "public"."enum_resume_technologies_type";
   DROP TYPE "public"."enum_resume_tools_category";
-  DROP TYPE "public"."enum_resume_setups_export_format";
   DROP TYPE "public"."enum_resume_setups_options_optmized_for";
   DROP TYPE "public"."enum_resume_imports_import_type";
   DROP TYPE "public"."enum_resume_exports_status";

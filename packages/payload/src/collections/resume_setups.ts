@@ -2,9 +2,8 @@ import type { CollectionConfig } from "payload";
 
 import { Role, byRole } from "@repo/payload/utils/roles";
 import {
-  getResumeExportFormatOptions,
   getResumeOptmizedForOptions,
-  ResumeExportFormat,
+  ResumeOptmizedFor,
 } from "@repo/payload/utils/resumes";
 import { ownerField } from "@repo/payload/collections/fields/owner";
 
@@ -45,13 +44,6 @@ export const resumeSetups: CollectionConfig<"resume_setups"> = {
       name: "resumePrompt",
     },
     {
-      type: "select",
-      name: "exportFormat",
-      label: "Export Format",
-      defaultValue: ResumeExportFormat.MARKDOWN,
-      options: getResumeExportFormatOptions(),
-    },
-    {
       type: "text",
       name: "targetCountry",
       label: "Target Country",
@@ -79,6 +71,7 @@ export const resumeSetups: CollectionConfig<"resume_setups"> = {
           type: "select",
           name: "optmizedFor",
           label: "Optmized for ATS",
+          defaultValue: ResumeOptmizedFor.BOTH,
           options: getResumeOptmizedForOptions(),
         },
       ],

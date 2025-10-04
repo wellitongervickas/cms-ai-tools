@@ -1,5 +1,5 @@
 {
-  "id": "3a212c43-edb0-4c6c-ba6a-49e240da46b3",
+  "id": "5d21bb01-a476-40db-a3dd-51d81dee2a69",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -2624,14 +2624,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "export_format": {
-          "name": "export_format",
-          "type": "enum_resume_setups_export_format",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'markdown'"
-        },
         "target_country": {
           "name": "target_country",
           "type": "varchar",
@@ -2661,7 +2653,8 @@
           "type": "enum_resume_setups_options_optmized_for",
           "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'both'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -4233,14 +4226,6 @@
         "finance",
         "education",
         "other"
-      ]
-    },
-    "public.enum_resume_setups_export_format": {
-      "name": "enum_resume_setups_export_format",
-      "schema": "public",
-      "values": [
-        "markdown",
-        "pdf"
       ]
     },
     "public.enum_resume_setups_options_optmized_for": {

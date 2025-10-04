@@ -21,24 +21,6 @@ export const getResumeOptmizedForOptions = () => {
   ];
 };
 
-export enum ResumeExportFormat {
-  MARKDOWN = "markdown",
-  PDF = "pdf",
-}
-
-export const getResumeExportFormatOptions = () => {
-  return [
-    {
-      value: ResumeExportFormat.MARKDOWN,
-      label: "Markdown",
-    },
-    {
-      value: ResumeExportFormat.PDF,
-      label: "PDF",
-    },
-  ];
-};
-
 export enum ResumeExportType {
   PLAIN_TEXT = "plainText",
   FILE = "file",

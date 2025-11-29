@@ -1,5 +1,6 @@
 export enum OpenAIModel {
   GPT_5 = "gpt-5",
+  GPT_5_1 = "gpt-5.1",
   GPT_4_1 = "gpt-4.1",
 }
 
@@ -8,6 +9,10 @@ export const getOpenAIModelOptions = () => {
     {
       label: "GPT-5",
       value: OpenAIModel.GPT_5,
+    },
+    {
+      label: "GPT-5.1",
+      value: OpenAIModel.GPT_5_1,
     },
     {
       label: "GPT-4.1",

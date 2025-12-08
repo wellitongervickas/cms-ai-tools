@@ -84,15 +84,15 @@
     "sharp": "^0.34.4"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.74",
+    "@ai-sdk/openai": "^2.0.80",
     "@types/markdown-pdf": "^9.0.5",
-    "ai": "^5.0.104",
+    "ai": "^5.0.108",
     "bufferutil": "^4.0.9",
     "handlebars": "^4.7.8",
     "lodash": "^4.17.21",
     "markdown-it": "^14.1.0",
     "markdown-pdf": "^11.0.0",
-    "puppeteer": "^24.31.0",
+    "puppeteer": "^24.32.1",
     "zod": "^4.1.13"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { byRole, Role } from "@repo/payload/utils/roles";
-import { mimeTypes, formatOptions, imageSizes } from "../utils/upload.js";
+import { mimeTypes, formatOptions, imageSizes } from "@repo/payload/utils/upload";
 
 export const media: CollectionConfig = {
   slug: "media",

@@ -26,7 +26,7 @@ export const byRole = (roles: Role[]) => {
     try {
       return roles.some((role) => roleValidatorMap[role](args) === true);
     } catch (error) {
-      args.req.payload.logger.error("Error while validating roles", error);
+      args.req.payload.logger.error("Error while validating roles: " + error);
       return false;
     }
   };

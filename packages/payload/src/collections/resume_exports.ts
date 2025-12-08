@@ -19,6 +19,9 @@ import { markdownToPDF } from "@repo/payload/utils/files";
 
 export const resumeExports: CollectionConfig<"resume_exports"> = {
   slug: "resume_exports",
+  versions: {
+    drafts: false
+  },
   admin: {
     useAsTitle: "name",
     description:

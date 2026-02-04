@@ -10,6 +10,21 @@ const md = new MarkdownIt({
 });
 
 /**
+ * Sanitize AI-generated markdown by stripping wrapping code fences.
+ * LLMs often wrap output in ```markdown ... ``` which causes markdown-it
+ * to render everything as a <pre><code> block instead of semantic HTML.
+ */
+function sanitizeMarkdown(raw: string): string {
+  let cleaned = raw.trim();
+  const codeFencePattern = /^```(?:markdown|md|html)?\s*\n([\s\S]*?)\n```\s*$/;
+  const match = cleaned.match(codeFencePattern);
+  if (match?.[1]) {
+    cleaned = match[1].trim();
+  }
+  return cleaned;
+}
+
+/**
  * Convert markdown string to PDF buffer
  */
 export async function markdownToPDF(
@@ -19,33 +34,36 @@ export async function markdownToPDF(
     margins?: { top?: string; right?: string; bottom?: string; left?: string };
   }
 ): Promise<File["data"]> {
-  // Convert markdown to HTML
-  const htmlContent = md.render(markdownContent);
+  // Sanitize and convert markdown to HTML
+  const cleanedMarkdown = sanitizeMarkdown(markdownContent);
+  const htmlContent = md.render(cleanedMarkdown);
 
   // Default CSS for professional resume typography
   const defaultCSS = `
-    /* --- Root --- */
     * {
       box-sizing: border-box;
     }
 
     body {
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       line-height: 1.55;
       color: #222;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem 2.5rem;
+      margin: 0;
+      padding: 0;
       background: #fff;
       font-size: 11.5pt;
     }
 
-    /* --- Headings --- */
     h1, h2, h3, h4 {
       font-weight: 600;
       color: #111;
       margin: 1.4em 0 0.6em;
       line-height: 1.25;
+    }
+
+    h1:first-child,
+    h2:first-child {
+      margin-top: 0;
     }
 
     h1 {
@@ -70,7 +88,6 @@ export async function markdownToPDF(
       margin-top: 1.2em;
     }
 
-    /* --- Text Elements --- */
     p {
       margin: 0.4em 0 0.6em;
     }
@@ -92,7 +109,6 @@ export async function markdownToPDF(
       text-decoration: underline;
     }
 
-    /* --- Lists --- */
     ul, ol {
       margin: 0.4em 0 0.8em;
       padding-left: 1.5em;
@@ -102,7 +118,6 @@ export async function markdownToPDF(
       margin-bottom: 0.25em;
     }
 
-    /* --- Tables --- */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -121,7 +136,6 @@ export async function markdownToPDF(
       font-weight: 600;
     }
 
-    /* --- Blockquotes --- */
     blockquote {
       border-left: 3px solid #999;
       margin: 1em 0;
@@ -130,8 +144,12 @@ export async function markdownToPDF(
       font-style: italic;
     }
 
-   
-    /* --- Page Breaks --- */
+    hr {
+      border: none;
+      border-top: 1px solid #ccc;
+      margin: 1.5em 0;
+    }
+
     @media print {
       body {
         -webkit-print-color-adjust: exact;
@@ -147,19 +165,17 @@ export async function markdownToPDF(
   `;
 
   // Complete HTML document
-  const fullHTML = `
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>${options?.css || defaultCSS}</style>
-      </head>
-      <body>
-        ${htmlContent}
-      </body>
-    </html>
-  `;
+  const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>${options?.css || defaultCSS}</style>
+</head>
+<body>
+  ${htmlContent}
+</body>
+</html>`;
 
   // Launch puppeteer and generate PDF
   const browser = await puppeteer.launch({

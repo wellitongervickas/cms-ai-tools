@@ -1022,7 +1022,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface Openai {
   id: number;
   general: {
-    model: 'gpt-5' | 'gpt-5.1' | 'gpt-4.1';
+    model: 'gpt-5' | 'gpt-5.1' | 'gpt-5.2' | 'gpt-4.1';
   };
   updatedAt?: string | null;
   createdAt?: string | null;
